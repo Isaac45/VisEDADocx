@@ -1,0 +1,125 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ImageEDA · VisEDA Docs</title><link rel="stylesheet" href="styles.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="logo"></div><div><h1>VisEDA</h1><p>Visual Exploratory Data Analysis</p></div></div><nav class="nav"><a href="index.html">Overview</a><a href="installation.html">Installation</a><a href="quickstart.html">Quickstart</a><a class="active" href="image-eda.html">ImageEDA</a><a href="hyperspectral.html">Hyperspectral</a><a href="pointcloud.html">Point Cloud</a><a href="api.html">API Reference</a><a href="examples.html">Examples</a><a href="gallery.html">Gallery</a><a href="testing.html">Testing File</a><a href="roadmap.html">Roadmap</a></nav></aside><main class="main"><div class="topbar"><strong>VisEDA Documentation</strong></div>
+<section class="hero"><h2>ImageEDA</h2><p>The complete image dataset analysis module. This page explains how to use every important function, what each output means, and how to interpret the dashboards produced from a cat and dog dataset.</p><div class="badges"><span class="badge">Image inventory</span><span class="badge">Dataset quality</span><span class="badge">Colour analysis</span><span class="badge">Texture & frequency</span><span class="badge">Duplicate detection</span></div></section>
+<section class="content">
+  <div class="callout">Use <code>ImageEDA</code> when you want to understand an image dataset before model training: file validity, image sizes, label balance, brightness, sharpness, colour distribution, texture, duplicate images, and normalization statistics.</div>
+
+  <h2>Recommended workflow</h2>
+  <pre><code class="language-python">from pathlib import Path
+from viseda import ImageEDA
+
+output_dir = Path("image_eda_outputs")
+output_dir.mkdir(exist_ok=True)
+
+eda = ImageEDA(
+    verbose=True,
+    n_colors=8,
+    phash_threshold=10,
+    blur_threshold=50.0,
+    compute_glcm=True,
+    compute_freq=True,
+)
+
+eda.load("C:/Users/Ike/Desktop/testvis/", label_from_parent=True)
+summary = eda.summary()
+
+print(summary["inventory"])
+print(summary["quality"]["brightness"])
+print(summary["labels"])
+
+eda.plot_colour(save_path=str(output_dir / "colour_dashboard.png"))
+eda.plot_texture(save_path=str(output_dir / "texture_dashboard.png"))
+eda.plot_samples(n=25, cols=5, save_path=str(output_dir / "samples.png"))
+eda.report(str(output_dir / "image_eda_report.html"))</code></pre>
+
+  <h2>Constructor: <code>ImageEDA(...)</code></h2>
+  <table><tr><th>Parameter</th><th>Meaning</th><th>Practical guidance</th></tr>
+  <tr><td><code>verbose</code></td><td>Prints loading and processing progress.</td><td>Set to <code>True</code> while testing; use <code>False</code> in automated scripts.</td></tr>
+  <tr><td><code>max_images</code></td><td>Limits how many images are analysed.</td><td>Useful for quick previews on very large datasets.</td></tr>
+  <tr><td><code>n_colors</code></td><td>Number of clusters used for dominant colour extraction.</td><td>Use 5–10 for normal datasets; higher values give more detailed palettes.</td></tr>
+  <tr><td><code>phash_threshold</code></td><td>Hamming-distance threshold for near-duplicate grouping.</td><td>Lower values are stricter; higher values catch more visually similar images.</td></tr>
+  <tr><td><code>blur_threshold</code></td><td>Sharpness threshold used to flag blurry images.</td><td>Increase it if you want stricter blur detection.</td></tr>
+  <tr><td><code>compute_glcm</code></td><td>Enables GLCM texture features.</td><td>Keep enabled for surface/texture-heavy datasets; disable for faster runs.</td></tr>
+  <tr><td><code>compute_freq</code></td><td>Enables FFT frequency analysis.</td><td>Useful for noise, detail, and image-frequency inspection.</td></tr></table>
+
+  <h2>Loading functions</h2>
+  <div class="grid cards"><div class="card"><h3><code>load()</code></h3><p>Loads images from a folder, one file, or a list of file paths. It supports common formats including JPG, PNG, BMP, TIFF, WEBP, and GIF. When <code>label_from_parent=True</code>, labels are taken from folder names such as <code>dataset/Cat/img001.jpg</code> and <code>dataset/Dog/img002.jpg</code>.</p></div><div class="card"><h3><code>load_arrays()</code></h3><p>Loads images that already exist as NumPy arrays. This is useful when images are generated, augmented, or loaded from another data pipeline instead of from disk.</p></div></div>
+  <pre><code class="language-python"># Folder-based loading
+eda.load("C:/Users/Ike/Desktop/testvis/", label_from_parent=True, recursive=True)
+
+# Array-based loading
+import numpy as np
+arrays = [np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8) for _ in range(10)]
+labels = ["no damage", "minor", "moderate", "heavy", "no damage", "minor", "moderate", "heavy", "no damage", "minor"]
+eda.load_arrays(arrays, labels=labels)</code></pre>
+
+  <h2>Analysis functions</h2>
+  <table><tr><th>Function</th><th>What it does</th><th>How users should interpret it</th></tr>
+  <tr><td><code>summary()</code></td><td>Returns a nested dictionary containing all computed dataset statistics.</td><td>This is the main programmatic output. Use it in notebooks, logs, reports, or automated data-quality checks.</td></tr>
+  <tr><td><code>normalization_stats()</code></td><td>Returns per-channel RGB mean and standard deviation in the [0, 1] range.</td><td>Use these values in PyTorch/TensorFlow normalization so model inputs match the dataset distribution.</td></tr>
+  <tr><td><code>report(output_path)</code></td><td>Creates a self-contained HTML report from the summary.</td><td>Use this when sharing EDA results with supervisors, collaborators, or project teams.</td></tr></table>
+  <pre><code class="language-python">summary = eda.summary()
+print(summary["inventory"]["total"])
+print(summary["spatial"]["height"])
+print(summary["quality"]["sharpness"])
+
+stats = eda.normalization_stats()
+print(stats)
+# Example use in torchvision:
+# transforms.Normalize(mean=stats["mean"], std=stats["std"])</code></pre>
+
+  <h2>Summary dictionary explained</h2>
+  <table><tr><th>Section</th><th>Meaning</th><th>Why it matters</th></tr>
+  <tr><td><code>inventory</code></td><td>Total, valid, and corrupt images; file formats; colour modes; dtype distribution.</td><td>Confirms whether the dataset is readable and whether mixed formats or corrupt files may affect training.</td></tr>
+  <tr><td><code>spatial</code></td><td>Height, width, aspect ratio, megapixels, file size, and orientation distribution.</td><td>Shows whether resizing/cropping is needed and whether the dataset has inconsistent resolution.</td></tr>
+  <tr><td><code>pixel_stats</code></td><td>RGB means, RGB standard deviations, and per-image mean statistics.</td><td>Supports normalization and reveals channel imbalance or unusual image intensity distributions.</td></tr>
+  <tr><td><code>quality</code></td><td>Brightness, contrast, sharpness, noise, entropy, exposure, compression, and blur counts.</td><td>Helps identify poor-quality images that may harm model learning.</td></tr>
+  <tr><td><code>colour</code></td><td>Saturation, colour temperature, and grayscale-like counts.</td><td>Reveals colour bias, warm/cool dominance, and whether images contain enough colour information.</td></tr>
+  <tr><td><code>texture</code></td><td>GLCM contrast, dissimilarity, homogeneity, energy, correlation, and ASM.</td><td>Useful for datasets where texture carries class information, such as cracks, surfaces, medical scans, or fabric.</td></tr>
+  <tr><td><code>frequency</code></td><td>Low, mid, and high FFT frequency-band energy.</td><td>Shows whether images are dominated by smooth structures or fine details/noise.</td></tr>
+  <tr><td><code>duplicates</code></td><td>Exact duplicate groups and near-duplicate groups.</td><td>Helps prevent data leakage between training, validation, and test sets.</td></tr>
+  <tr><td><code>labels</code></td><td>Class distribution and class imbalance ratio.</td><td>Shows whether sampling, weighting, or augmentation may be needed.</td></tr></table>
+
+  <h2>Plotting functions</h2>
+  <table><tr><th>Function</th><th>Output</th><th>Meaning</th></tr>
+  <tr><td><code>plot()</code></td><td>Full dashboard.</td><td>Combines inventory, spatial, quality, exposure, colour, texture, frequency, and format summaries in one figure.</td></tr>
+  <tr><td><code>plot_colour()</code></td><td>Colour dashboard.</td><td>Shows RGB channel means, dominant colours, hue distribution, HSV saturation/value, Lab colour space, and colour temperature.</td></tr>
+  <tr><td><code>plot_quality()</code></td><td>Quality dashboard.</td><td>Shows sharpness, noise, JPEG blockiness, blurry image counts, exposure map, and texture radar.</td></tr>
+  <tr><td><code>plot_texture()</code></td><td>Texture and frequency dashboard.</td><td>Shows GLCM texture distributions. Useful for checking whether images have consistent surface/detail patterns.</td></tr>
+  <tr><td><code>plot_samples()</code></td><td>Random sample grid.</td><td>Quick visual check of what the dataset actually contains.</td></tr>
+  <tr><td><code>plot_class_samples()</code></td><td>Samples grouped by class.</td><td>Helps compare visual patterns across classes.</td></tr>
+  <tr><td><code>plot_average_image()</code></td><td>Average and standard-deviation image.</td><td>Reveals dataset bias, object centring, background consistency, and spatial variation.</td></tr>
+  <tr><td><code>plot_channel_correlation()</code></td><td>RGB pairwise scatter matrix.</td><td>Shows how strongly red, green, and blue channels move together.</td></tr>
+  <tr><td><code>plot_duplicates()</code></td><td>Duplicate image viewer.</td><td>Displays exact or near-duplicate groups for review.</td></tr></table>
+
+  <h2>Interpreting the cat and dog dataset outputs</h2>
+  <div class="figure"><img src="assets/plot.png" alt="Full ImageEDA dashboard"><p><strong>Full dashboard:</strong> This combines dataset overview, class balance, image size distributions, quality metrics, colour saturation, entropy, texture, frequency energy, colour temperature, and file format distribution. In the cat/dog example, the labels are balanced, which is important because model training will not be biased toward one class.</p></div>
+  <div class="figure"><img src="assets/plot_colour.png" alt="Colour analysis dashboard"><p><strong>Colour analysis:</strong> Use this to understand whether your dataset has a strong colour bias. The dominant-colour palette summarizes common pixel colours, while the hue and saturation plots show whether images contain diverse colour information or are concentrated in a narrow colour range.</p></div>
+  <div class="figure"><img src="assets/plot_quality.png" alt="Quality analysis dashboard"><p><strong>Quality analysis:</strong> Sharpness and noise indicate whether images are clear enough for training. The blurry detection chart separates images below the configured blur threshold. The exposure map helps detect images that are too dark or too bright.</p></div>
+  <div class="figure"><img src="assets/plot_texture.png" alt="Texture and frequency dashboard"><p><strong>Texture and frequency:</strong> GLCM features describe local texture patterns. High contrast suggests stronger texture differences; high homogeneity means neighbouring pixels are more similar. These features are useful when the dataset contains surface patterns, damage marks, or fine visual details.</p></div>
+  <div class="figure"><img src="assets/plot_channel_correlation.png" alt="Channel correlation matrix"><p><strong>Channel correlation:</strong> The RGB channel correlation matrix shows how related the channels are. Strong correlations are common in natural images, but unusual channel behaviour may suggest colour preprocessing issues or dataset-specific lighting bias.</p></div>
+
+  <h2>Common usage pattern for ML projects</h2>
+  <pre><code class="language-python"># 1. Inspect the dataset
+eda.load("dataset/train", label_from_parent=True)
+summary = eda.summary()
+
+# 2. Check class balance
+print(summary["labels"]["label_distribution"])
+print(summary["labels"]["class_imbalance_ratio"])
+
+# 3. Check image quality
+print(summary["quality"]["blurry_count"])
+print(summary["quality"]["overexposed_frac"])
+print(summary["quality"]["underexposed_frac"])
+
+# 4. Get normalization values for model training
+norm = eda.normalization_stats()
+print("mean:", norm["mean"])
+print("std:", norm["std"])
+
+# 5. Export shareable outputs
+eda.plot_colour(save_path="colour_dashboard.png")
+eda.plot_texture(save_path="texture_dashboard.png")
+eda.report("eda_report.html")</code></pre>
+</section>
+<footer class="footer">Built for the VisionEDA/VisEDA library documentation package. Version reference: 0.1.0.</footer></main></div><script src="script.js"></script></body></html>

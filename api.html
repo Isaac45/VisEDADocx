@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>API Reference · VisEDA Docs</title><link rel="stylesheet" href="styles.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="logo"></div><div><h1>VisEDA</h1><p>Visual Exploratory Data Analysis</p></div></div><nav class="nav"><a href="index.html">Overview</a><a href="installation.html">Installation</a><a href="quickstart.html">Quickstart</a><a href="image-eda.html">ImageEDA</a><a href="hyperspectral.html">Hyperspectral</a><a href="pointcloud.html">Point Cloud</a><a class="active" href="api.html">API Reference</a><a href="examples.html">Examples</a><a href="gallery.html">Gallery</a><a href="testing.html">Testing File</a><a href="roadmap.html">Roadmap</a></nav></aside><main class="main"><div class="topbar"><strong>VisEDA Documentation</strong></div>
+<section class="hero"><h2>API Reference</h2><p>Function-focused reference for the current VisionEDA public API, with ImageEDA documented in the greatest detail because it is the complete part of the library.</p></section>
+<section class="content"><h2>ImageEDA public methods</h2>
+<table><tr><th>Method</th><th>Purpose</th><th>Typical use</th></tr>
+<tr><td><code>ImageEDA(...)</code></td><td>Creates an image EDA object with configuration for colour clustering, duplicate detection, blur detection, texture, and frequency analysis.</td><td>Instantiate once per dataset or experiment.</td></tr>
+<tr><td><code>load(source, labels=None, label_from_parent=False, recursive=True)</code></td><td>Loads image files from a directory, file, or list of paths.</td><td>Use for normal folder-based datasets.</td></tr>
+<tr><td><code>load_arrays(arrays, labels=None)</code></td><td>Loads image arrays directly from memory.</td><td>Use for generated, augmented, or externally loaded images.</td></tr>
+<tr><td><code>summary()</code></td><td>Returns all major EDA statistics as a dictionary.</td><td>Best for programmatic analysis and automated quality checks.</td></tr>
+<tr><td><code>normalization_stats()</code></td><td>Returns RGB mean and std in [0, 1].</td><td>Use in model preprocessing pipelines.</td></tr>
+<tr><td><code>plot()</code></td><td>Creates the full EDA dashboard.</td><td>Use after the internal radar-axis issue is patched.</td></tr>
+<tr><td><code>plot_colour()</code></td><td>Creates a colour-analysis dashboard.</td><td>Inspect colour distributions and dataset colour bias.</td></tr>
+<tr><td><code>plot_quality()</code></td><td>Creates a quality-analysis dashboard.</td><td>Use after the internal radar-axis issue is patched.</td></tr>
+<tr><td><code>plot_texture()</code></td><td>Creates texture feature histograms.</td><td>Inspect GLCM features for surface/detail patterns.</td></tr>
+<tr><td><code>plot_samples()</code></td><td>Displays random sample images.</td><td>Visually verify dataset content.</td></tr>
+<tr><td><code>plot_class_samples()</code></td><td>Displays sample images per class.</td><td>Compare classes visually.</td></tr>
+<tr><td><code>plot_average_image()</code></td><td>Computes average and standard-deviation images.</td><td>Find spatial bias and object-position consistency.</td></tr>
+<tr><td><code>plot_channel_correlation()</code></td><td>Plots RGB channel histograms and pairwise scatter plots.</td><td>Check channel relationships and colour preprocessing issues.</td></tr>
+<tr><td><code>plot_duplicates(mode="exact"|"near")</code></td><td>Visualizes duplicate or near-duplicate image groups.</td><td>Review possible leakage or repeated images.</td></tr>
+<tr><td><code>report(output_path)</code></td><td>Generates an HTML report.</td><td>Share results outside Python.</td></tr></table>
+<h2>Example import</h2><pre><code class="language-python">from viseda import ImageEDA, HyperspectralEDA, HyperspectralDatasetEDA, PointCloudEDA, PointCloudDatasetEDA</code></pre>
+</section>
+<footer class="footer">Built for the VisionEDA/VisEDA library documentation package. Version reference: 0.1.0.</footer></main></div><script src="script.js"></script></body></html>

@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Quickstart · VisEDA Docs</title><link rel="stylesheet" href="styles.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="logo"></div><div><h1>VisEDA</h1><p>Visual Exploratory Data Analysis</p></div></div><nav class="nav"><a class="" href="index.html">Overview</a><a class="" href="installation.html">Installation</a><a class="active" href="quickstart.html">Quickstart</a><a class="" href="image-eda.html">ImageEDA</a><a class="" href="hyperspectral.html">Hyperspectral</a><a class="" href="pointcloud.html">Point Cloud</a><a class="" href="api.html">API Reference</a><a class="" href="examples.html">Examples</a><a class="" href="gallery.html">Gallery</a><a class="" href="testing.html">Testing File</a><a class="" href="roadmap.html">Roadmap</a></nav></aside><main class="main"><div class="topbar"><strong>VisEDA Documentation</strong></div><section class="hero"><h2>Quickstart</h2><p>Minimal examples for the public VisEDA API.</p></section><section class="content"><h2>Image dataset</h2><pre><code>from viseda import ImageEDA
+
+eda = ImageEDA(verbose=True)
+eda.load("path/to/dataset/", label_from_parent=True)
+summary = eda.summary()
+print(summary["quality"]["brightness"])
+print(eda.normalization_stats())
+eda.plot_colour(save_path="colour_dashboard.png")
+eda.plot_samples(n=25, cols=5, save_path="samples.png")
+eda.report("image_report.html")</code></pre><h2>Hyperspectral cube</h2><pre><code>import numpy as np
+from viseda import HyperspectralEDA
+
+wavelengths = np.linspace(400, 2500, 200)
+eda = HyperspectralEDA(wavelengths=wavelengths)
+eda.load("scene.hdr")
+summary = eda.summary()
+wl, signature = eda.spectral_signature(row=100, col=200)
+ndvi = eda.compute_ndvi(nir_band=140, red_band=60)
+eda.plot(save_path="hyperspectral_dashboard.png")</code></pre><h2>Point cloud</h2><pre><code>from viseda import PointCloudEDA
+
+eda = PointCloudEDA(max_points=500_000)
+eda.load("scan.las")
+summary = eda.summary()
+eda.plot(save_path="pointcloud_dashboard.png")
+eda.plot_3d(color_by="z")</code></pre></section><footer class="footer">Built for the VisionEDA/VisEDA library documentation package. Version reference: 0.1.0.</footer></main></div><script src="script.js"></script></body></html>

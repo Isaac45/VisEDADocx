@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Hyperspectral · VisEDA Docs</title><link rel="stylesheet" href="styles.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="logo"></div><div><h1>VisEDA</h1><p>Visual Exploratory Data Analysis</p></div></div><nav class="nav"><a class="" href="index.html">Overview</a><a class="" href="installation.html">Installation</a><a class="" href="quickstart.html">Quickstart</a><a class="" href="image-eda.html">ImageEDA</a><a class="active" href="hyperspectral.html">Hyperspectral</a><a class="" href="pointcloud.html">Point Cloud</a><a class="" href="api.html">API Reference</a><a class="" href="examples.html">Examples</a><a class="" href="gallery.html">Gallery</a><a class="" href="testing.html">Testing File</a><a class="" href="roadmap.html">Roadmap</a></nav></aside><main class="main"><div class="topbar"><strong>VisEDA Documentation</strong></div><section class="hero"><h2>Hyperspectral EDA</h2><p>Documentation for single-cube and dataset-level hyperspectral workflows.</p></section><section class="content"><h2>Single cube: <code>HyperspectralEDA</code></h2><pre><code>import numpy as np
+from viseda import HyperspectralEDA
+
+wavelengths = np.linspace(400, 2500, 200)
+eda = HyperspectralEDA(wavelengths=wavelengths)
+eda.load("scene.hdr")
+summary = eda.summary()
+wl, sig = eda.spectral_signature(row=100, col=200)
+scores, variance_ratio = eda.pca(n_components=10)
+ndvi = eda.compute_ndvi(nir_band=140, red_band=60)
+eda.plot(save_path="hyper_dashboard.png")</code></pre><h2>Dataset-level: <code>HyperspectralDatasetEDA</code></h2><pre><code>from viseda import HyperspectralDatasetEDA
+
+eda = HyperspectralDatasetEDA(wavelengths=wavelengths)
+eda.load("path/to/hyperspectral_dataset/", label_from_parent=True)
+summary = eda.summary()
+eda.plot(save_path="hyper_dataset_dashboard.png")</code></pre></section><footer class="footer">Built for the VisionEDA/VisEDA library documentation package. Version reference: 0.1.0.</footer></main></div><script src="script.js"></script></body></html>

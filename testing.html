@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Testing File · VisEDA Docs</title><link rel="stylesheet" href="styles.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="logo"></div><div><h1>VisEDA</h1><p>Visual Exploratory Data Analysis</p></div></div><nav class="nav"><a href="index.html">Overview</a><a href="installation.html">Installation</a><a href="quickstart.html">Quickstart</a><a href="image-eda.html">ImageEDA</a><a href="hyperspectral.html">Hyperspectral</a><a href="pointcloud.html">Point Cloud</a><a href="api.html">API Reference</a><a href="examples.html">Examples</a><a href="gallery.html">Gallery</a><a class="active" href="testing.html">Testing File</a><a href="roadmap.html">Roadmap</a></nav></aside><main class="main"><div class="topbar"><strong>VisEDA Documentation</strong></div>
+<section class="hero"><h2>Testing File</h2><p>A practical <code>testimg.py</code> script for exercising the current ImageEDA implementation without editing <code>eda.py</code>.</p></section>
+<section class="content"><div class="callout warning">The uploaded library version may raise a radar-axis error when running <code>plot()</code> or <code>plot_quality()</code>. This test file focuses on functions that currently run safely from outside the library.</div>
+<pre><code class="language-python">from pathlib import Path
+import numpy as np
+from viseda import ImageEDA
+
+DATASET_PATH = "C:/Users/Ike/Desktop/testvis/"
+OUTPUT_DIR = Path("image_eda_outputs")
+OUTPUT_DIR.mkdir(exist_ok=True)
+
+eda = ImageEDA(
+    verbose=True,
+    max_images=None,
+    n_colors=8,
+    phash_threshold=10,
+    blur_threshold=50.0,
+    compute_glcm=True,
+    compute_freq=True,
+)
+
+eda.load(DATASET_PATH, label_from_parent=True, recursive=True)
+summary = eda.summary()
+
+print("
+===== INVENTORY =====")
+print(summary["inventory"])
+
+print("
+===== SPATIAL =====")
+print(summary["spatial"])
+
+print("
+===== QUALITY: BRIGHTNESS =====")
+print(summary["quality"]["brightness"])
+
+print("
+===== QUALITY: SHARPNESS =====")
+print(summary["quality"]["sharpness"])
+
+print("
+===== COLOUR =====")
+print(summary["colour"])
+
+print("
+===== TEXTURE =====")
+print(summary["texture"])
+
+print("
+===== FREQUENCY =====")
+print(summary["frequency"])
+
+print("
+===== DUPLICATES =====")
+print(summary["duplicates"])
+
+print("
+===== LABELS =====")
+print(summary["labels"])
+
+print("
+===== NORMALIZATION STATS =====")
+print(eda.normalization_stats())
+
+# Safe visualisations
+eda.plot_colour(save_path=str(OUTPUT_DIR / "colour_dashboard.png"))
+eda.plot_texture(save_path=str(OUTPUT_DIR / "texture_dashboard.png"))
+eda.plot_samples(n=25, cols=5, save_path=str(OUTPUT_DIR / "sample_images.png"))
+eda.plot_class_samples(n_per_class=5, save_path=str(OUTPUT_DIR / "class_samples.png"))
+eda.plot_average_image(target_size=(224, 224), save_path=str(OUTPUT_DIR / "average_image.png"))
+eda.plot_channel_correlation(max_pixels=50_000, save_path=str(OUTPUT_DIR / "channel_correlation.png"))
+eda.plot_duplicates(mode="exact", max_groups=5, save_path=str(OUTPUT_DIR / "exact_duplicates.png"))
+eda.plot_duplicates(mode="near", max_groups=5, save_path=str(OUTPUT_DIR / "near_duplicates.png"))
+eda.report(str(OUTPUT_DIR / "image_eda_report.html"))
+
+# Test NumPy array loading separately
+arrays = [np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8) for _ in range(10)]
+array_labels = ["no damage", "minor", "moderate", "heavy", "no damage", "minor", "moderate", "heavy", "no damage", "minor"]
+
+eda_arrays = ImageEDA(verbose=True)
+eda_arrays.load_arrays(arrays, labels=array_labels)
+array_summary = eda_arrays.summary()
+
+print("
+===== ARRAY TEST SUMMARY =====")
+print(array_summary["inventory"])
+print(array_summary["quality"]["brightness"])
+print(array_summary["labels"])
+
+eda_arrays.plot_texture(save_path=str(OUTPUT_DIR / "array_texture_dashboard.png"))
+eda_arrays.report(str(OUTPUT_DIR / "array_report.html"))
+
+print("
+All safe ImageEDA tests completed successfully.")</code></pre>
+</section>
+<footer class="footer">Built for the VisionEDA/VisEDA library documentation package. Version reference: 0.1.0.</footer></main></div><script src="script.js"></script></body></html>
