@@ -1,8 +1,6 @@
 # VisionEDA Documentation Website
 
-This folder contains the static documentation website for **VisionEDA**, a Python library for exploratory data analysis of computer vision datasets, including image, hyperspectral image, and point cloud data.
-
-The website is designed as a simple static site, so it can be opened locally or hosted directly with GitHub Pages.
+This is a documentation website for **VisionEDA**, a Python library for exploratory data analysis of computer vision datasets, including image, hyperspectral image, and point cloud data.
 
 ## What is included
 
@@ -22,76 +20,118 @@ The website is designed as a simple static site, so it can be opened locally or 
 - `assets/` — images, visual outputs, and downloadable files used in the documentation.
 - `assets/VisEDA_Documentation.pdf` — complete detailed PDF documentation linked from the homepage sidebar download button.
 
-## Preview locally
+[//]: # (## Preview locally)
 
-You can open the site directly by double-clicking:
+[//]: # ()
+[//]: # (You can open the site directly by double-clicking:)
 
-```text
-index.html
-```
+[//]: # ()
+[//]: # (```text)
 
-For a better local preview, run a small local server from inside this folder:
+[//]: # (index.html)
 
-```bash
-python -m http.server 8000
-```
+[//]: # (```)
 
-Then open:
+[//]: # ()
+[//]: # (For a better local preview, run a small local server from inside this folder:)
 
-```text
-http://localhost:8000
-```
+[//]: # ()
+[//]: # (```bash)
 
-## Deploy on GitHub Pages
+[//]: # (python -m http.server 8000)
 
-1. Create a GitHub repository for the documentation website.
-2. Upload all files and folders in this directory, including `index.html`, `styles.css`, `script.js`, and `assets/`.
-3. Go to **Settings → Pages** in the GitHub repository.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select the branch, usually `main`, and the root folder `/`.
-6. Save the settings and wait for GitHub Pages to publish the site.
+[//]: # (```)
 
-The site should keep the white background with green accent styling. If GitHub Pages displays unexpected colours, confirm that `styles.css` was uploaded and that each HTML file links to it correctly:
+[//]: # ()
+[//]: # (Then open:)
 
-```html
-<link rel="stylesheet" href="styles.css">
-```
+[//]: # ()
+[//]: # (```text)
 
-## Updating the documentation
+[//]: # (http://localhost:8000)
 
-When new VisionEDA features are added:
+[//]: # (```)
 
-1. Update the relevant HTML page.
-2. Add code examples using fenced-style code blocks already used in the site.
-3. Add or replace visual outputs in the `assets/` folder.
-4. Keep API explanations user-focused: explain what the function does, when to use it, and how to interpret the output.
-5. Test the website locally before pushing to GitHub.
+[//]: # ()
+[//]: # (## Deploy on GitHub Pages)
 
-## Notes for maintaining code examples
+[//]: # ()
+[//]: # (1. Create a GitHub repository for the documentation website.)
 
-Code blocks include copy buttons through `script.js`. To keep this working, write examples inside standard HTML code blocks, such as:
+[//]: # (2. Upload all files and folders in this directory, including `index.html`, `styles.css`, `script.js`, and `assets/`.)
 
-```html
-<pre><code class="language-python">from viseda import ImageEDA</code></pre>
-```
+[//]: # (3. Go to **Settings → Pages** in the GitHub repository.)
 
-Avoid placing code only inside normal paragraphs because users will not get the copy button behaviour.
+[//]: # (4. Under **Build and deployment**, choose **Deploy from a branch**.)
 
-## Recommended documentation style
+[//]: # (5. Select the branch, usually `main`, and the root folder `/`.)
 
-For each function or method, include:
+[//]: # (6. Save the settings and wait for GitHub Pages to publish the site.)
 
-- Purpose: what the function does.
-- Inputs: important parameters users must understand.
-- Output: what is returned or saved.
-- Interpretation: what the result means in practical dataset analysis.
-- Example: a short working code snippet.
+[//]: # ()
+[//]: # (The site should keep the white background with green accent styling. If GitHub Pages displays unexpected colours, confirm that `styles.css` was uploaded and that each HTML file links to it correctly:)
+
+[//]: # ()
+[//]: # (```html)
+
+[//]: # (<link rel="stylesheet" href="styles.css">)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (## Updating the documentation)
+
+[//]: # ()
+[//]: # (When new VisionEDA features are added:)
+
+[//]: # ()
+[//]: # (1. Update the relevant HTML page.)
+
+[//]: # (2. Add code examples using fenced-style code blocks already used in the site.)
+
+[//]: # (3. Add or replace visual outputs in the `assets/` folder.)
+
+[//]: # (4. Keep API explanations user-focused: explain what the function does, when to use it, and how to interpret the output.)
+
+[//]: # (5. Test the website locally before pushing to GitHub.)
+
+[//]: # ()
+[//]: # (## Notes for maintaining code examples)
+
+[//]: # ()
+[//]: # (Code blocks include copy buttons through `script.js`. To keep this working, write examples inside standard HTML code blocks, such as:)
+
+[//]: # ()
+[//]: # (```html)
+
+[//]: # (<pre><code class="language-python">from viseda import ImageEDA</code></pre>)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (Avoid placing code only inside normal paragraphs because users will not get the copy button behaviour.)
+
+[//]: # ()
+[//]: # (## Recommended documentation style)
+
+[//]: # ()
+[//]: # (For each function or method, include:)
+
+[//]: # ()
+[//]: # (- Purpose: what the function does.)
+
+[//]: # (- Inputs: important parameters users must understand.)
+
+[//]: # (- Output: what is returned or saved.)
+
+[//]: # (- Interpretation: what the result means in practical dataset analysis.)
+
+[//]: # (- Example: a short working code snippet.)
 
 ## License
 
-This documentation package is prepared for the VisionEDA project. Add the same license as the main VisionEDA library if the repository is public.
-
+This documentation package is prepared for the VisionEDA project.
 
 ## Downloadable PDF
 
-The homepage includes a **Download PDF** button in the left sidebar. This links to `assets/VisEDA_Documentation.pdf` using the HTML `download` attribute, so visitors can save the complete detailed documentation directly from the documentation site.
+The homepage includes a **Download PDF** button in the left sidebar, so users can save the complete detailed documentation directly from the documentation site.
